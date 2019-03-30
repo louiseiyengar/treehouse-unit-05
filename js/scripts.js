@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-
   /** 
     Fetch Functions
   */
 
-  let employees;
-
-
+  let employees = new Array();
+  let searchEmployees = new Array();
+  
   fetch('https://randomuser.me/api/1.2/?format=json&results=12&nat=au,gb,nz,us')
     .then(checkStatus)
     .then(res => res.json())
@@ -23,6 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
     //close button on modal click
     if ((e.target.parentNode.className === "modal-close-btn") || (e.target.className === 'modal-close-btn')) {
       document.getElementsByClassName('modal-container')[0].style.display = "none"; 
+      if (searchEmployees.length) {
+        document.getElementById('search-input').value = '';
+        createEmployeeCards(employees);
+        searchEmployees = [];
+      }
 
     //open modal when employee card is clicked  
     } else if (e.target.className.includes("card")) {
@@ -33,13 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       document.getElementsByClassName('modal-container')[0].style.display = "block"; 
     } else if (e.target.id === 'modal-prev') {
-      indexOfCard = getCardIndex();
-      indexOfCard = (indexOfCard) ? (indexOfCard - 1) : (employees.length - 1);
-      addModalInfo(employees[indexOfCard]);
+      if (searchEmployees.length > 0) {
+        processNextPrev(searchEmployees, "prev")
+      } else {
+        processNextPrev(employees, "prev");
+      }
     } else if (e.target.id === 'modal-next') {
-      indexOfCard = getCardIndex();
-      indexOfCard = (indexOfCard === employees.length - 1) ? 0 : (indexOfCard + 1);
-      addModalInfo(employees[indexOfCard]);
+      if (searchEmployees.length > 0) {
+        processNextPrev(searchEmployees, "next")
+      } else {
+        processNextPrev(employees, "next");
+      }
     }
   }); //end event listener
 
@@ -48,11 +56,19 @@ document.addEventListener('DOMContentLoaded', () => {
     processSearch(e.target.childNodes[0].value);
   });
 
-
-
   /** 
     Helper Functions
   */
+  function processNextPrev(employees, which) {
+    indexOfCard = getCardIndex(employees);
+    if (which === "next") {
+      indexOfCard = (indexOfCard === employees.length - 1) ? 0 : (indexOfCard + 1);
+    } else {
+      indexOfCard = (indexOfCard) ? (indexOfCard - 1) : (employees.length - 1);
+    }
+    addModalInfo(employees[indexOfCard]);
+  }
+
   function checkStatus(response) {
     if (response.ok) {
       return Promise.resolve(response);
@@ -63,24 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getCountry(employeeCountry) {
     const countryArray = [
-      {
-        abbr: "AU",
-        country: "Australia"
-      },
-      {
-        abbr: "GB",
-        country: "United Kingdom"
-      },
-      {
-        abbr: "NZ",
-        country: "New Zealand"
-      },
-      {
-        abbr: "US",
-        country: "United States"
-      }
+      {abbr: "AU", country: "Australia"}, {abbr: "GB",country: "United Kingdom"},
+      {abbr: "NZ", country: "New Zealand"}, {abbr: "US",country: "United States"}
     ];
-
     return countryArray.find(country => employeeCountry === country.abbr).country;
   }
 
@@ -103,9 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return (birthday.getMonth() + 1) + "/" + birthday.getDate() + "/" + birthday.getFullYear();
   }
 
-  function getCardIndex() {
+  function getCardIndex(employeeArray) {
     const targetEmail = document.getElementsByClassName("modal-text")[0].textContent;
-    return employees.findIndex((employee => employee.email === targetEmail));
+    return employeeArray.findIndex((employee => employee.email === targetEmail));
   }
 
   function createSearchForm() {
@@ -120,8 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 function createSearchArray (userInput) {
-    let searchEmployees = new Array();
- 
+  //  let searchEmployees = new Array();
+    searchEmployees = [];
     //CREATE ARRAY OF FOUND STUDENTS -- push li elements for students that match user input
     //if user enters more than one space between characters, ensure only one space
     userInput = userInput.trim().toLowerCase().replace(/  +/g, ' ');   
@@ -168,11 +169,13 @@ function createSearchArray (userInput) {
     modal.appendChild(info);
 
     // add prev / next buttons
+    if (!(searchEmployees.length === 1)) {
     const buttonContainer = document.createElement("DIV");
-    buttonContainer.classList.add("modal-btn-container");
-    modalContainer.appendChild(buttonContainer);
-    buttonContainer.innerHTML = '<button type="button" id="modal-prev" class="modal-prev btn">Prev</button>';
-    buttonContainer.innerHTML += '<button type="button" id="modal-next" class="modal-next btn">Next</button>';
+      buttonContainer.classList.add("modal-btn-container");
+      modalContainer.appendChild(buttonContainer);
+      buttonContainer.innerHTML = '<button type="button" id="modal-prev" class="modal-prev btn">Prev</button>';
+      buttonContainer.innerHTML += '<button type="button" id="modal-next" class="modal-next btn">Next</button>';
+    }
   }
 
   /** 
@@ -180,7 +183,6 @@ function createSearchArray (userInput) {
   */
 
   function addModalInfo(employee) {
-   console.log(employee);
     const infoContainer = document.getElementsByClassName("modal-info-container")[0];
     const country = getCountry(employee.nat);
 
