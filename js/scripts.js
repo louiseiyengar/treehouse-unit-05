@@ -34,21 +34,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetEmail = cardDiv.lastElementChild.firstElementChild.nextElementSibling.textContent;
       const employee = employees.find(employee => employee.email === targetEmail);
       addModalInfo(employee);
-
       document.getElementsByClassName('modal-container')[0].style.display = "block"; 
+
     } else if (e.target.id === 'modal-prev') {
       if (searchEmployees.length > 0) {
         processNextPrev(searchEmployees, "prev")
       } else {
         processNextPrev(employees, "prev");
       }
+
     } else if (e.target.id === 'modal-next') {
       if (searchEmployees.length > 0) {
         processNextPrev(searchEmployees, "next")
       } else {
         processNextPrev(employees, "next");
       }
-    }
+    } 
   }); //end event listener
 
   document.addEventListener('submit', e => {
@@ -109,6 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return employeeArray.findIndex((employee => employee.email === targetEmail));
   }
 
+  function resetAllEmployees() {
+    if (document.getElementById("search-input").value === '' &&
+        searchEmployees.length > 0) {
+      createEmployeeCards(employees);
+      searchEmployees = [];
+    }
+  }
+
   function createSearchForm() {
     const searchDiv = document.getElementsByClassName("search-container")[0];
     const searchForm  = document.createElement("FORM");
@@ -117,6 +126,27 @@ document.addEventListener('DOMContentLoaded', () => {
     searchDiv.appendChild(searchForm);
     searchForm.innerHTML = '<input type="search" id="search-input" class="search-input" placeholder="Search...">';
     searchForm.innerHTML += '<input type="submit" value="&#x1F50D;" id="serach-submit" class="search-submit">';
+
+    document.getElementById("search-input").addEventListener('click', function () {
+      console.log(document.getElementById("search-input").value);
+      setTimeout(function() {
+        resetAllEmployees();
+        // if (document.getElementById("search-input").value === '' &&
+        //     searchEmployees.length > 0) {
+        //       createEmployeeCards(employees);
+        //       searchEmployees = [];
+        //     }
+       }, 20)
+    });
+
+    document.getElementById("search-input").addEventListener('keyup', function () {
+      resetAllEmployees();
+      // if (document.getElementById("search-input").value === '' &&
+      //     searchEmployees.length > 0) {
+      //       createEmployeeCards(employees);
+      //       searchEmployees = [];
+      //     }
+    });
   
   }
 
@@ -143,7 +173,15 @@ function createSearchArray (userInput) {
 
   function processSearch(userInput) {
     searchEmployees = createSearchArray(userInput);
-    createEmployeeCards(searchEmployees);
+    if (searchEmployees.length) {
+      createEmployeeCards(searchEmployees);
+    } else {
+      processNoResults();
+    }
+  }
+
+  function processNoResults() {
+    console.log("puddlie");
   }
 
   function createModalContainer() {
