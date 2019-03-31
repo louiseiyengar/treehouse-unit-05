@@ -111,10 +111,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function resetAllEmployees() {
-    if (document.getElementById("search-input").value === '' &&
-        searchEmployees.length > 0) {
-      createEmployeeCards(employees);
-      searchEmployees = [];
+    if (document.getElementById("search-input").value === '') {
+      //remove 'no search result' error message if exists
+      const searchContainer = document.getElementsByClassName('search-container')[0];
+      const errorDiv = document.getElementsByClassName('search-error');
+      if (errorDiv.length) {
+        searchContainer.removeChild(errorDiv[0]);
+      }
+      
+      //Display all employees and reset searchEmployees array
+      if (searchEmployees.length > 0) {
+        createEmployeeCards(employees);
+        searchEmployees = [];
+      }
     }
   }
 
@@ -128,24 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
     searchForm.innerHTML += '<input type="submit" value="&#x1F50D;" id="serach-submit" class="search-submit">';
 
     document.getElementById("search-input").addEventListener('click', function () {
-      console.log(document.getElementById("search-input").value);
       setTimeout(function() {
         resetAllEmployees();
-        // if (document.getElementById("search-input").value === '' &&
-        //     searchEmployees.length > 0) {
-        //       createEmployeeCards(employees);
-        //       searchEmployees = [];
-        //     }
        }, 20)
     });
 
     document.getElementById("search-input").addEventListener('keyup', function () {
       resetAllEmployees();
-      // if (document.getElementById("search-input").value === '' &&
-      //     searchEmployees.length > 0) {
-      //       createEmployeeCards(employees);
-      //       searchEmployees = [];
-      //     }
     });
   
   }
@@ -181,7 +179,15 @@ function createSearchArray (userInput) {
   }
 
   function processNoResults() {
-    console.log("puddlie");
+    const divSearchContainer = document.getElementsByClassName('search-container')[0];
+    if (document.getElementsByClassName('search-error').length === 0) {
+      const divError = document.createElement('DIV');
+      divError.classList.add('search-error');
+      divError.innerHTML = '<p>Your search found no results</p>';
+      divSearchContainer.appendChild(divError);
+    }
+    createEmployeeCards(employees);
+    searchEmployees = [];
   }
 
   function createModalContainer() {
@@ -208,7 +214,7 @@ function createSearchArray (userInput) {
 
     // add prev / next buttons
     if (!(searchEmployees.length === 1)) {
-    const buttonContainer = document.createElement("DIV");
+      const buttonContainer = document.createElement("DIV");
       buttonContainer.classList.add("modal-btn-container");
       modalContainer.appendChild(buttonContainer);
       buttonContainer.innerHTML = '<button type="button" id="modal-prev" class="modal-prev btn">Prev</button>';
