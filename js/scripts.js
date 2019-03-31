@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       employees = data.results;
       createEmployeeCards(employees);
-      createModalContainer();
       createSearchForm();
     })
     .catch(error => console.log('looks like there was a problem', error)
@@ -89,6 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
       `
       galleryDiv.innerHTML += employeeCard;
     });
+
+    createModalContainer();
   }
 
   function addModalInfo(employee) {
@@ -149,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     FUNCTIONS TO PROCESS SEARCH
   */
   function processSearch(userInput) {
+    removeSearchErrorDiv();
     searchEmployees = createSearchArray(userInput);
     if (searchEmployees.length) {
       createEmployeeCards(searchEmployees);
@@ -178,18 +180,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function createSearchArray (userInput) {
-  //  let searchEmployees = new Array();
     searchEmployees = [];
     userInput = userInput.trim().toLowerCase().replace(/  +/g, ' ');   
 
     employees.forEach(employee => {
-      let name = employee.name.first + " " + employee.name.last;
-      fName = employee.name.first.trim().toLowerCase();
-      lName = employee.name.last.trim().toLowerCase(); //if more than one space in rest of name (ie. lilou le gall)
+      let fName = employee.name.first.trim().toLowerCase();
+      let lName = employee.name.last.trim().toLowerCase(); //if more than one space in rest of name (ie. lilou le gall)
+      let name = fName + " " + lName;
 
       if ((name.search(userInput) === 0) 
-      || (fName.search(userInput) === 0)
-      || (lName.search(userInput) === 0)) {
+          || (fName.search(userInput) === 0)
+          || (lName.search(userInput) === 0)) {
             searchEmployees.push(employee);
       }
     });
@@ -221,18 +222,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resetAllEmployees() {
     if (document.getElementById("search-input").value === '') {
-      //remove 'no search result' error message if exists
-      const searchContainer = document.getElementsByClassName('search-container')[0];
-      const errorDiv = document.getElementsByClassName('search-error');
-      if (errorDiv.length) {
-        searchContainer.removeChild(errorDiv[0]);
-      }
+      removeSearchErrorDiv();
       
       //Display all employees and reset searchEmployees array
       if (searchEmployees.length > 0) {
         createEmployeeCards(employees);
         searchEmployees = [];
       }
+    }
+  }
+
+  function removeSearchErrorDiv() {
+    const searchContainer = document.getElementsByClassName('search-container')[0];
+    const errorDiv = document.getElementsByClassName('search-error');
+    if (errorDiv.length) {
+      searchContainer.removeChild(errorDiv[0]);
     }
   }
 
@@ -276,4 +280,5 @@ document.addEventListener('DOMContentLoaded', () => {
     birthday = new Date(birthday);
     return (birthday.getMonth() + 1) + "/" + birthday.getDate() + "/" + birthday.getFullYear();
   }
+  
 }); //end content loaded
