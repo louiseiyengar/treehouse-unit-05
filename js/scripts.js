@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(error => {
       console.log(error);
-      alert(`There was an error retrieving employee data.  Please try again at another time. ${error}`);
+      alert(`There was an error.  Please try again at another time. ${error}`);
     }
   );  //end fetch
 
@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     FUNCTIONS TO CREATE EMPLOYEE CARDS AND MODAL CARD
   */
   function createEmployeeCards(employees) {
+  //  const modalContainer = document.querySelector('.modal-container');
     const galleryDiv = document.getElementById('gallery');
 
     galleryDiv.innerHTML = '';
@@ -93,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
       galleryDiv.innerHTML += employeeCard;
     });
 
-    createModalContainer();
+    processModalContainer();
   }
 
   function addModalInfo(employee) {
@@ -118,6 +119,18 @@ document.addEventListener('DOMContentLoaded', () => {
   /** 
     FUNCTION TO CREATE MODAL 
   */
+  function processModalContainer () {
+    if (!(document.querySelector('.modal-container'))) {
+      createModalContainer();
+    }
+
+    if (searchEmployees.length === 1) {
+      document.querySelector('.modal-btn-container').style.display = 'none';
+    } else {
+      document.querySelector('.modal-btn-container').style.display = 'block';
+    }
+  }
+
   function createModalContainer() {
     const body = document.querySelector('body');
     const galleryNextSibling = document.getElementById('gallery').nextElementSibling;
@@ -128,26 +141,17 @@ document.addEventListener('DOMContentLoaded', () => {
     body.insertBefore(modalContainer, galleryNextSibling);
 
     //add modal container
-    modal = document.createElement("DIV");
-    modal.classList.add("modal");
-    modalContainer.appendChild(modal);
-
-    //add button
+    const modal = createAppendElement(modalContainer, 'modal', 'DIV');
+    //add close 'X' button
     modal.innerHTML = '<button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>';
 
     //add info container
-    const info = document.createElement("DIV");
-    info.classList.add("modal-info-container")
-    modal.appendChild(info);
+    createAppendElement(modal, 'modal-info-container', 'DIV');
 
-    // add prev / next buttons
-    if (!(searchEmployees.length === 1)) {
-      const buttonContainer = document.createElement("DIV");
-      buttonContainer.classList.add("modal-btn-container");
-      modalContainer.appendChild(buttonContainer);
-      buttonContainer.innerHTML = '<button type="button" id="modal-prev" class="modal-prev btn">Prev</button>';
-      buttonContainer.innerHTML += '<button type="button" id="modal-next" class="modal-next btn">Next</button>';
-    }
+    //add Prev / Next navigation buttons
+    const buttonContainer = createAppendElement(modalContainer, 'modal-btn-container', 'DIV');
+    buttonContainer.innerHTML = '<button type="button" id="modal-prev" class="modal-prev btn">Prev</button>';
+    buttonContainer.innerHTML += '<button type="button" id="modal-next" class="modal-next btn">Next</button>';
   }
 
   /** 
@@ -204,10 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function processNoResults() {
     const divSearchContainer = document.getElementsByClassName('search-container')[0];
     if (document.getElementsByClassName('search-error').length === 0) {
-      const divError = document.createElement('DIV');
-      divError.classList.add('search-error');
+      divError = createAppendElement(divSearchContainer, 'search-error', 'DIV');
       divError.innerHTML = '<p>Your search found no results</p>';
-      divSearchContainer.appendChild(divError);
     }
     createEmployeeCards(employees);
   }
@@ -215,6 +217,13 @@ document.addEventListener('DOMContentLoaded', () => {
   /** 
     HELPER FUNCTIONS
   */
+  function createAppendElement (parent, childClass, elementName) {
+    const element = document.createElement(elementName);
+    element.classList.add(childClass);
+    parent.appendChild(element);
+    return element;
+  }
+
   function checkStatus(response) {
     if (response.ok) {
       return Promise.resolve(response);
