@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
  
   /** 
     FETCH PROMISE
+    -Get 12 employees from randomuser.me, create page with employee data
   */
   fetch('https://randomuser.me/api/1.2/?format=json&results=12&nat=au,gb,nz,us')
     .then(checkStatus)
@@ -38,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //close button on modal
     } else if ((e.target.parentNode.className === "modal-close-btn") || (e.target.className === 'modal-close-btn')) {
-      document.getElementsByClassName('modal-container')[0].style.display = "none"; 
+      document.getElementsByClassName('modal-container')[0].style.display = "none";
+      //re-display all employees if there has been a search. 
       const searchInput = document.getElementById('search-input')
       if (searchEmployees.length || searchInput.value.trim() !== '') {
         document.getElementById('search-input').value = '';
@@ -72,8 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
   /** 
     FUNCTIONS TO CREATE EMPLOYEE CARDS AND MODAL CARD
   */
+
+  /**
+   * Presents employee cards for all employee objects passed in employees array
+   * @param {object} employees - array of employee objects to be displayed as cards
+   */
   function createEmployeeCards(employees) {
-  //  const modalContainer = document.querySelector('.modal-container');
     const galleryDiv = document.getElementById('gallery');
 
     galleryDiv.innerHTML = '';
@@ -97,6 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
     processModalContainer();
   }
 
+  /**
+   * Presents modal with information for one employee
+   * @param {object} employee - Single employee object with info to be displayed on modal.
+   */
   function addModalInfo(employee) {
     const infoContainer = document.getElementsByClassName("modal-info-container")[0];
     const country = getCountry(employee.nat);
@@ -119,6 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
   /** 
     FUNCTION TO CREATE MODAL 
   */
+
+  /**
+   * Creates Modal and Modal container once when page with all employees are first loaded.
+   * The navigation part of the modal is not displayed if there is only one employee found by Search
+   */
   function processModalContainer () {
     if (!(document.querySelector('.modal-container'))) {
       createModalContainer();
@@ -131,6 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /**
+   * Add Modal DOM elements to the page
+   */
   function createModalContainer() {
     const body = document.querySelector('body');
     const galleryNextSibling = document.getElementById('gallery').nextElementSibling;
@@ -157,6 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
   /** 
     FUNCTIONS TO PROCESS SEARCH
   */
+
+  /**
+   * If Search form is submitted, this process the search to display employees found
+   * whose names match the string input.
+   * @param {string} userInput - user input from search form field
+   */
   function processSearch(userInput) {
     removeSearchErrorDiv();
     searchEmployees = createSearchArray(userInput);
@@ -167,6 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /**
+   * Create search form and append to page.
+   * Add event listeners to re-display all employees if search box is cleared by
+   * backspacing or deleting, or by clicking on the X in the search input element
+   */
   function createSearchForm() {
     const searchDiv = document.getElementsByClassName("search-container")[0];
     const searchForm  = document.createElement("FORM");
@@ -176,24 +205,33 @@ document.addEventListener('DOMContentLoaded', () => {
     searchForm.innerHTML = '<input type="search" id="search-input" class="search-input" placeholder="Search...">';
     searchForm.innerHTML += '<input type="submit" value="&#x1F50D;" id="serach-submit" class="search-submit">';
 
+    //if user clicks X that appears in search input field in Chrome and other browsers
     document.getElementById("search-input").addEventListener('click', function () {
-      setTimeout(function() {
+      setTimeout(function() { //wait 20 milliseconds for search input field to clear text
         resetAllEmployees();
       }, 20)
     });
 
+    //user clears search input field by backspacing or deleting text
     document.getElementById("search-input").addEventListener('keyup', function () {
       resetAllEmployees();
     });
   }
 
+  /**
+   * Go through each employee, and if name, first name or last name even partially matches 
+   * user input, then put employee in searchEmployees array.
+   * @param {string} userInput - user input from search form field
+   * @return {object} searchEmployees array of employees found from search
+   */
   function createSearchArray (userInput) {
     searchEmployees = [];
+    //if user enters more than one space between first and last name
     userInput = userInput.trim().toLowerCase().replace(/  +/g, ' ');   
 
     employees.forEach(employee => {
       let fName = employee.name.first.trim().toLowerCase();
-      let lName = employee.name.last.trim().toLowerCase(); //if more than one space in rest of name (ie. lilou le gall)
+      let lName = employee.name.last.trim().toLowerCase();
       let name = fName + " " + lName;
 
       if ((name.search(userInput) === 0) 
@@ -205,6 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return searchEmployees;
   }
 
+  /**
+   * If search found no results, display message under search input form and display all employees
+   */
   function processNoResults() {
     const divSearchContainer = document.getElementsByClassName('search-container')[0];
     if (document.getElementsByClassName('search-error').length === 0) {
@@ -217,6 +258,15 @@ document.addEventListener('DOMContentLoaded', () => {
   /** 
     HELPER FUNCTIONS
   */
+
+  /**
+   * This is a generalized function to create a DOM element, add a class, and append the element
+   * to a parent.
+   * @param {object} parent - DOM element of parent where child element will append
+   * @param {string} childClass - name of class for new child element 
+   * @param {string} elementName - type of element of created child (ie, DIV)
+   * @return {object} - return newly created and appended element 
+   */
   function createAppendElement (parent, childClass, elementName) {
     const element = document.createElement(elementName);
     element.classList.add(childClass);
@@ -224,6 +274,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return element;
   }
 
+/**
+ * Checks response from Fetch Promise.  Will return an error if problems receiving
+ * data or creating page from data. 
+ * @param {object} response - response from Fetch Promise
+ * @return {Promise} - resolve or reject (with error) of Promise 
+ */
   function checkStatus(response) {
     if (response.ok) {
       return Promise.resolve(response);
@@ -232,6 +288,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /**
+   * After search, re-display all employee cards, empty searcEmployees array, and
+   * remove the search error message, if it exists.
+   */
   function resetAllEmployees() {
     if (document.getElementById("search-input").value === '') {
       removeSearchErrorDiv();
@@ -240,6 +300,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /**
+   * Remove Search found no results message
+   */
   function removeSearchErrorDiv() {
     const searchContainer = document.getElementsByClassName('search-container')[0];
     const errorDiv = document.getElementsByClassName('search-error');
@@ -248,11 +311,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /**
+   * Gets the array index of employee being displayed in modal.  Searches by email address.
+   * @param {object} employeeArray - array of employees -- either all employees or employees from search 
+   */
   function getCardIndex(employeeArray) {
     const targetEmail = document.getElementsByClassName("modal-text")[0].textContent;
     return employeeArray.findIndex((employee => employee.email === targetEmail));
   }
 
+  /**
+   * Display next or previous employee in Modal.
+   * @param {object} employees - array of employees, either all employees or employees from search 
+   * @param {string} which - indicates whether 'Next' or 'Previous' button clicked. 
+   */
   function processNextPrev(employees, which) {
     indexOfCard = getCardIndex(employees);
     if (which === "next") {
@@ -263,6 +335,11 @@ document.addEventListener('DOMContentLoaded', () => {
     addModalInfo(employees[indexOfCard]);
   }
 
+  /**
+   * Gets country name by looking up country abbreviation sent in for employee from API
+   * @param {string} employeeCountry - country of employee
+   * @return {string} - country name
+   */
   function getCountry(employeeCountry) {
     const countryArray = [
       {abbr: "AU", country: "Australia"}, {abbr: "GB", country: "United Kingdom"},
@@ -271,8 +348,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return countryArray.find(country => employeeCountry === country.abbr).country;
   }
 
-  // https://stackoverflow.com/questions/8358084/regular-expression-to-reformat-a-us-phone-number-in-javascript
-
+  /**
+   * If there is a ) or - in the fourth phone number array position, will format employee
+   * phone number as (123) 555-5555.  Match code found at:
+   * https://stackoverflow.com/questions/8358084/regular-expression-to-reformat-a-us-phone-number-in-javascript 
+   * @param {string} phoneNumberString - phone number of employee
+   * @return {string} phone number formatted or same string as param
+   */
   function formatPhoneNumber(phoneNumberString) {
     if (phoneNumberString.charAt(4) === "-" || phoneNumberString.charAt(4) === ")") {
       var cleaned = (phoneNumberString).replace(/\D/g, '')
@@ -284,6 +366,11 @@ document.addEventListener('DOMContentLoaded', () => {
     return phoneNumberString;
   }
 
+  /**
+   * Formats birthday string for employee as MM/DD/YYYY
+   * @param {string} birthday - birthday string passed in from API for employee
+   * @return {string} formatted birthday: MM/DD/YYYY 
+   */
   function formatBirthday(birthday) {
     birthday = new Date(birthday);
     return (birthday.getMonth() + 1) + "/" + birthday.getDate() + "/" + birthday.getFullYear();
