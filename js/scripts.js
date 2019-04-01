@@ -17,29 +17,33 @@ document.addEventListener('DOMContentLoaded', () => {
       createEmployeeCards(employees);
       createSearchForm();
     })
-    .catch(error => console.log('looks like there was a problem', error)
+    .catch(error => {
+      console.log(error);
+      alert(`There was an error retrieving employee data.  Please try again at another time. ${error}`);
+    }
   );  //end fetch
 
   /** 
     EVENT LISTENERS
   */
   document.addEventListener('click', e => {
-    //close button on modal
-    if ((e.target.parentNode.className === "modal-close-btn") || (e.target.className === 'modal-close-btn')) {
-      document.getElementsByClassName('modal-container')[0].style.display = "none"; 
-      if (searchEmployees.length) {
-        document.getElementById('search-input').value = '';
-        createEmployeeCards(employees);
-        searchEmployees = [];
-      }
 
     //open modal when employee card is clicked  
-    } else if (e.target.className.includes("card")) {
+    if (e.target.className.includes("card")) {
       const cardDiv = e.path.find(pathObject => pathObject.className === 'card');
       const targetEmail = cardDiv.lastElementChild.firstElementChild.nextElementSibling.textContent;
       const employee = employees.find(employee => employee.email === targetEmail);
       addModalInfo(employee);
       document.getElementsByClassName('modal-container')[0].style.display = "block"; 
+
+    //close button on modal
+    } else if ((e.target.parentNode.className === "modal-close-btn") || (e.target.className === 'modal-close-btn')) {
+      document.getElementsByClassName('modal-container')[0].style.display = "none"; 
+      const searchInput = document.getElementById('search-input')
+      if (searchEmployees.length || searchInput.value.trim() !== '') {
+        document.getElementById('search-input').value = '';
+        resetAllEmployees();
+      }
 
     //change to previous employee if 'Prev' button clicked on modal
     } else if (e.target.id === 'modal-prev') {
@@ -206,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
       divSearchContainer.appendChild(divError);
     }
     createEmployeeCards(employees);
-    searchEmployees = [];
   }
 
   /** 
@@ -216,19 +219,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (response.ok) {
       return Promise.resolve(response);
     } else {
-      return Promise.reject(new Error(response.statusText));
+      return Promise.reject(new Error(response.status));
     }
   }
 
   function resetAllEmployees() {
     if (document.getElementById("search-input").value === '') {
       removeSearchErrorDiv();
-      
-      //Display all employees and reset searchEmployees array
-      if (searchEmployees.length > 0) {
-        createEmployeeCards(employees);
-        searchEmployees = [];
-      }
+      searchEmployees = [];
+      createEmployeeCards(employees);
     }
   }
 
@@ -257,8 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getCountry(employeeCountry) {
     const countryArray = [
-      {abbr: "AU", country: "Australia"}, {abbr: "GB",country: "United Kingdom"},
-      {abbr: "NZ", country: "New Zealand"}, {abbr: "US",country: "United States"}
+      {abbr: "AU", country: "Australia"}, {abbr: "GB", country: "United Kingdom"},
+      {abbr: "NZ", country: "New Zealand"}, {abbr: "US", country: "United States"}
     ];
     return countryArray.find(country => employeeCountry === country.abbr).country;
   }
