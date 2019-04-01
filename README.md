@@ -24,3 +24,6 @@ To return to view all employees, you can: 1) Delete search name in the search in
 5) I added a drop-shadow to the modal.
 6) I added keyframe opacity animation when the modal appears.
 7) For the 'X' close button on the modal, I added to the hover state: drop-shadow, white background color and black text color.
+
+Screenshot:
+![Unit05Example](https://user-images.githubusercontent.com/42808209/55358772-2727da80-549e-11e9-9e33-ee4e028dcabe.jpg)
