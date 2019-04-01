@@ -18,7 +18,7 @@ To return to view all employees, you can: 1) Delete search name in the search in
 
 ======= Design Modifications ======================
 1) Because I am using employees from different countries, I put states and countries on the employee cards.  I also put the country with the modal information.
-2) I reduced the line-height on the cards:  I use a Dell XPS 13, and needed the cards to be a bit smaller to see the navigation.
+2) I reduced the line-height on the cards.
 3) I added color to header, a small border-bottom, text-shadow and increased font on the header text.
 4) I added a drop-shadow to the hover state for the employee cards.
 5) I added a drop-shadow to the modal.
