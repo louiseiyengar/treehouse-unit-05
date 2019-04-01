@@ -1,19 +1,26 @@
 # FSJS project 5 - Public API Request
 
-For this project, I requested, via the Fetch API, 12 employees from https://randomuser.me/.  I displayed those 12 employees
+For this project, I requested, via the Fetch API, 12 employees from https://randomuser.me/. Employees are from Australia, United Kingdom, New Zealand, and the United States.  I used the information to display the employees as 'cards' on a startup company employee directory web page.
 
-============================================================================================
+======= About Modal =============================
+If you click an employee, a modal will appear with further information about the employee.  There are "Prev' and 'Next' navigation buttons that will allow you to view the employees listed on the page in th modal.  
 
-For this OOJS project, I created a word game in which you need to guess the letters of a book title -- generally a well known American or English novel or play.
+Please note: when you reach the last employee, if you click 'Next', the first employee on the page will be listed, so you can continue to cycle through all employees.  Similarly, when you reach the first employee, if you click 'Prev', the last employee displayed will appear in the modal.
 
-You guess the letters by typing a letter on your keyboard or clicking the buttons on an on-screen keyboard.
+To return to viewing all employees, click the 'X' in the modal area.
 
-You have five tries - each incorrect guess will lose you one heart.  
+======= About Search =============================
+There is a search form field allowing you to filter employees by name.  If you submit even a partial portion of the name (including just one letter).  Employees whose full names, first name, or last name match what has been entered, will appear on the web page.  (For example, if you type the letter 'M', employees whose first and last names start with 'M" will appear).
 
-In addition, I added a feature allowing you to see the author of the book, but it will cost one heart (try).  On your fourth wrong guess, the option to see the author will disappear.
+If more than one employee matches your search, you can use the navigation buttons to view the 'matched' employees in the modal.
 
-After five wrong guesses, or if you correctly select all the letters in the title, you will see a screen indicating whether you won or lost, and displaying the book's title and author.
+To return to view all employees, you can: 1) Delete search name in the search input field, 2) Click on the 'X' in the search input field to delete the search text, or 3) click on the 'X' in the modal area, if you are viewing a searched employee in the modal.
 
-URL for this project: https://louiseiyengar.github.io/treehouse-unit-04/
-
-Screen shot of the game:
+======= Design Modifications ======================
+1) Because I am using employees from different countries, I put states and countries on the employee cards.  I also put the country with the modal information.
+2) I reduced the line-height on the cards:  I use a Dell XPS 13, and needed the cards to be a bit smaller to see the navigation.
+3) I added color to header, a small border-bottom, text-shadow and increased font on the header text.
+4) I added a drop-shadow to the hover state for the employee cards.
+5) I added a drop-shadow to the modal.
+6) I added keyframe opacity animation when the modal appears.
+7) For the 'X' close button on the modal, I added to the hover state: drop-shadow, white background color and black text color.
