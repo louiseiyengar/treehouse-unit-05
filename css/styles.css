@@ -154,8 +154,8 @@ card:hover {
     border: 1px solid rgba(100, 100, 100, 0.3);
     transition: .4s ease-out;
     box-shadow: 3px 3px 8px #222;
-    /* animation-name: modalopen;
-    animation-duration: 1s; */
+    animation-name: modalopen;
+    animation-duration: 1s;
 } 
 
 .modal-close-btn {
@@ -211,9 +211,8 @@ card:hover {
     border-radius: 0.25em;
     border: 1px solid rgba(100, 100, 100, 0.3);
     box-shadow: 3px 3px 8px #222;
-
-    /* animation-name: modalopen;
-    animation-duration: 1s; */
+    animation-name: modalopen;
+    animation-duration: 1s;
 }
 
 
@@ -286,8 +285,7 @@ card:hover {
     }
 }
 
-
-/* @keyframes modalopen {
+@keyframes modalopen {
     from { opacity: 0};
     to {opacity: 1};
-} */
+}
