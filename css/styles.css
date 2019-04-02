@@ -155,8 +155,8 @@ card:hover {
     transition: .4s ease-out;
     box-shadow: 3px 3px 8px #222;
     /* animation-name: modalopen;
-    animation-duration: 1s;
-} */
+    animation-duration: 1s; */
+} 
 
 .modal-close-btn {
     position: absolute;
