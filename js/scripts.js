@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //open modal when employee card is clicked  
     if (e.target.className.includes("card")) {
-      const cardDiv = e.path.find(pathObject => pathObject.className === 'card');
+      const cardDiv = e.composedPath().find(pathObject => pathObject.className === 'card');
       const targetEmail = cardDiv.lastElementChild.firstElementChild.nextElementSibling.textContent;
       const employee = employees.find(employee => employee.email === targetEmail);
       addModalInfo(employee);
